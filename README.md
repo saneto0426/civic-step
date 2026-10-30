@@ -1,36 +1,127 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+# civic-step
 
-## Getting Started
+2026年度社会情報学実習2の成果物
 
-First, run the development server:
+# CivicStep (シビックステップ)
 
-```bash
-npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
-```
+青山大学の学生に向けた、ボランティア活動への参加ハードルを下げ、関心を行動へ繋げるマッチング＆体験談閲覧Webアプリケーションです。
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+---
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+## 1. プロジェクトの背景・課題感 (Why)
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+### 背景
 
-## Learn More
+- 青山大学 シビックエンゲージメントセンター (CEC) では、「地の塩、世の光」の体現や社会貢献型リーダーの育成を目指している[cite: 3]。
+- 学生の **85%** がボランティアに関心を持っている一方、実際の経験者は **30%** に留まっている[cite: 3]。
+- CEC自体の認知度も低下傾向にある[cite: 3]。
 
-To learn more about Next.js, take a look at the following resources:
+### ターゲットペルソナ
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
+- **経済学部2年生（就活を意識し始めた層）**[cite: 4]
+  - 「興味はあるが、意識が高そうで自分には関係ないと感じる」[cite: 4, 7]
+  - 「バイトばかりで、ガクチカとしてアピールできる経験がない」[cite: 4]
 
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
+### 真因（解決すべきコア課題）
 
-## Deploy on Vercel
+> **「社会参加活動が、自身の将来や成長と結びついていない」**[cite: 4]  
+> 参加によって得られる経験・スキルのイメージが湧かないため、関心が実際の行動に結びついていない[cite: 4]。
 
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
+---
 
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+## 2. プロダクト概要と提供価値 (What)
+
+### 3つのステップによる行動変容
+
+1. **ハードルを下げる（興味マッチング）**: 3〜5問の簡単な設問から、タイプに合った活動を提示[cite: 5, 8]。
+2. **イメージを沸かせる（ストーリー・口コミ）**: 過去の参加者の生の声や獲得スキル・体験談を提示し、不安を払拭[cite: 5, 7]。
+3. **実際の行動へ（外部送客）**: 関心が高まった状態で、既存のボランティア申請サービス（AOYAMA-portal等）へシームレスに誘導[cite: 5, 6]。
+
+---
+
+## 3. システムアーキテクチャ & 技術スタック (How)
+
+コスト0円でMVP検証を可能にする構成を採用[cite: 8]。
+
+- **フロントエンド**: Next.js (App Router, TypeScript, Tailwind CSS)
+- **バックエンド / データベース**: Supabase (PostgreSQL / Free Tier)[cite: 6, 8]
+- **ホスティング**: Vercel (Free Tier)[cite: 8]
+- **認証・管理画面**: MVP対象外（デモデータおよび閲覧専用）[cite: 9]
+
+---
+
+## 4. MVP機能要件 (Scope)
+
+### 対象スコープ
+
+- 対象ユーザー: **学生ユーザーのみ**[cite: 9]
+- ※シビックエンゲージメントセンター職員による管理画面・活動登録機能は対象外とし、データはあらかじめデモデータとしてSupabaseに登録する[cite: 9]。
+
+### 画面一覧・画面遷移フロー
+
+1. **トップ画面 (`/`)**
+   - サービスの導入、目的の提示[cite: 8]。
+   - 「診断を始める」CTAボタン[cite: 8]。
+2. **診断画面 (`/questions`)**
+   - 3〜5問の回答形式（選択式）[cite: 8]。
+   - 志向性や関心分野を判定[cite: 6]。
+3. **結果表示画面 (`/results`)**
+   - 診断結果に基づくおすすめ活動の上位3件提示[cite: 8]。
+   - 簡単な概要とマッチした理由の表示。
+4. **詳細・口コミ画面 (`/activities/[id]`)**
+   - 活動の詳細内容、日時・場所などの要件。
+   - 参加者の生の声・口コミ（得られた経験・ガクチカへの繋がり）の閲覧[cite: 5, 8, 9]。
+   - 既存サービス（AOYAMA-portal等）への外部遷移リンク[cite: 6, 8]。
+
+---
+
+## 5. データベース設計（初期モック案）
+
+### `activities` (活動情報)
+
+- `id` (uuid, PK)
+- `title` (text): 活動名
+- `category` (text): 分野（教育、環境、地域貢献、国際など）
+- `description` (text): 活動概要
+- `tags` (text[]): マッチング判定用の特徴タグ（例: 初心者歓迎, 就活に役立つ, 単発）
+- `location` (text): 活動場所
+- `external_url` (text): AOYAMA-portal等の詳細・申請URL
+- `image_url` (text): アイキャッチ画像
+
+### `reviews` (参加者口コミ・体験談)
+
+- `id` (uuid, PK)
+- `activity_id` (uuid, FK): 紐づく活動ID
+- `user_faculty` (text): 参加者の学部・学年（例: 経済学部 3年）
+- `content` (text): 口コミ・体験談本文
+- `growth_point` (text): 参加して得られた成長・身についたスキル（ガクチカ視点）
+- `created_at` (timestamp)
+
+---
+
+## 6. プロジェクト進捗指標 & リスケ基準
+
+- **0%**: 画面遷移図・DB設計の完了[cite: 9]
+- **30%**: UIモック（フロントエンド）の実装完了[cite: 9]
+  - _遅延時基準_: CSS等のデザイン作り込みを妥協し、DB連携処理へ移行[cite: 10]。
+- **60%**: DBとの通信・データ表示処理完了[cite: 9]
+  - _遅延時基準_: 複雑な動的マッチングを断念し、「固定データ表示」に縮小して結合へ進む[cite: 10]。
+- **90%**: システム結合・マッチング機能の動作テスト完了[cite: 9]
+- **100%**: バグ修正・最終調整の完了[cite: 9]
+  - _遅延時基準_: 軽微な表示崩れは許容し、「診断から詳細表示・外部リンクまで通る」体験を最優先[cite: 10]。
+
+---
+
+## 7. 実装側（私側）で今すぐ具体化・決定すべき検討事項
+
+1. **診断アルゴリズム（マッチングロジック）の仕様**
+   - 3〜5問の設問内容の確定（例：「週何日動けるか」「興味のある分野」「身につけたいスキル」など）[cite: 8]。
+   - 各回答が `activities` のどのタグ/スコアに加点され、どうやって上位3件を絞り込むかのルール策定[cite: 8]。
+2. **デモデータの用意（リアリティの担保）**
+   - 既存の青山大学ボランティア案件を参考にしたデモデータ（5〜10件程度）の作成。
+   - ペルソナ（就活を意識する学生）に響く「得られた経験・スキルの口コミ」の文章作成[cite: 4, 9]。
+3. **Supabaseのセットアップ**
+   - テーブル作成とRLS（Row Level Security: 公開読み取り設定）の適用。
+   - TypeScript型定義（Database types）の生成。
+4. **コンポーネント・タスクのメンバー振り分け**
+   - UI実装担当（トップ/診断/結果/詳細画面）とDB・ロジック担当の切り分け。
