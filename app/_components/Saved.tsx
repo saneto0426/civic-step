@@ -1,17 +1,20 @@
-import { activities, type Activity } from "../_data/mock-data";
+import type { Activity } from "../_data/mock-data";
 import { ActivityCard } from "./Home";
 import Icon from "./Icon";
 
 export default function Saved({
+  activities,
   saved,
   openDetail,
   startQuiz,
 }: {
-  saved: number[];
+  activities: Activity[];
+  saved: (string | number)[];
   openDetail: (a: Activity) => void;
   startQuiz: () => void;
 }) {
   const items = activities.filter((a) => saved.includes(a.id));
+
   return (
     <section className="mx-auto min-h-[65vh] max-w-[1180px] px-5 py-16 md:px-8 md:py-20">
       <p className="eyebrow text-[#0a754a]">SAVED</p>

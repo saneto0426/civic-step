@@ -1,14 +1,19 @@
-import { activities, type Activity } from "../_data/mock-data";
+import type { Activity } from "../_data/mock-data";
 import type { IconName } from "./Icon";
 import Icon from "./Icon";
 
 export default function Home({
+  activities,
   startQuiz,
   openDetail,
 }: {
+  activities: Activity[];
   startQuiz: () => void;
   openDetail: (a: Activity) => void;
 }) {
+  const featured = activities[0];
+  const sampleReview = featured?.reviews?.[0];
+
   return (
     <>
       <section className="relative overflow-hidden bg-[#f7f8f3]">
@@ -59,7 +64,7 @@ export default function Home({
             <div className="mt-10 flex items-center gap-8 border-t border-[#075b3a]/10 pt-6">
               <div>
                 <strong className="font-serif text-2xl text-[#075b3a]">
-                  24
+                  {activities.length}
                 </strong>
                 <span className="ml-1 text-xs text-[#687b74]">活動掲載中</span>
               </div>
@@ -72,50 +77,49 @@ export default function Home({
               </div>
             </div>
           </div>
-          <div className="relative mx-auto h-[510px] w-full max-w-[540px]">
-            <div className="absolute right-0 top-0 h-[430px] w-[82%] overflow-hidden rounded-[180px_180px_28px_28px]">
-              <img
-                src={activities[0].image}
-                alt="地域で清掃活動をするボランティア"
-                className="h-full w-full object-cover"
-              />
-              <div className="absolute inset-0 bg-gradient-to-t from-[#063a28]/40 via-transparent to-transparent" />
-            </div>
-            <div className="absolute bottom-3 left-0 w-[260px] rounded-2xl border border-white/70 bg-white/90 p-5 shadow-[0_18px_50px_rgba(12,65,45,.15)] backdrop-blur">
-              <div className="flex items-center justify-between">
-                <span className="text-[11px] font-bold tracking-wider text-[#71827c]">
-                  YOUR MATCH
-                </span>
-                <span className="rounded-full bg-[#e7f3c3] px-2.5 py-1 text-xs font-extrabold text-[#075b3a]">
-                  96% MATCH
-                </span>
+
+          {featured && (
+            <div className="relative mx-auto h-[510px] w-full max-w-[540px]">
+              <div className="absolute right-0 top-0 h-[430px] w-[82%] overflow-hidden rounded-[180px_180px_28px_28px]">
+                <img
+                  src={featured.image}
+                  alt={featured.title}
+                  className="h-full w-full object-cover"
+                />
+                <div className="absolute inset-0 bg-gradient-to-t from-[#063a28]/40 via-transparent to-transparent" />
               </div>
-              <h3 className="mt-4 font-serif text-lg font-semibold">
-                週末の里山保全
-              </h3>
-              <div className="mt-3 flex gap-4 text-[11px] font-medium text-[#61736d]">
-                <span className="flex items-center gap-1">
-                  <Icon name="location" size={13} />
-                  相模原
-                </span>
-                <span className="flex items-center gap-1">
-                  <Icon name="clock" size={13} />
-                  3時間
-                </span>
+              <div
+                onClick={() => openDetail(featured)}
+                className="cursor-pointer absolute bottom-3 left-0 w-[260px] rounded-2xl border border-white/70 bg-white/90 p-5 shadow-[0_18px_50px_rgba(12,65,45,.15)] backdrop-blur transition hover:-translate-y-1"
+              >
+                <div className="flex items-center justify-between">
+                  <span className="text-[11px] font-bold tracking-wider text-[#71827c]">
+                    PICK UP
+                  </span>
+                  <span className="rounded-full bg-[#e7f3c3] px-2.5 py-1 text-xs font-extrabold text-[#075b3a]">
+                    {featured.category}
+                  </span>
+                </div>
+                <h3 className="mt-4 font-serif text-base font-semibold line-clamp-2">
+                  {featured.title}
+                </h3>
+                <div className="mt-3 flex gap-4 text-[11px] font-medium text-[#61736d]">
+                  <span className="flex items-center gap-1 truncate">
+                    <Icon name="location" size={13} />
+                    {featured.place}
+                  </span>
+                </div>
+              </div>
+              <div className="absolute right-[-2px] top-[72px] grid h-[94px] w-[94px] place-items-center rounded-full border-[7px] border-[#f7f8f3] bg-[#dcf26b] text-[#075b3a]">
+                <div className="text-center">
+                  <Icon name="heart" size={23} className="mx-auto" />
+                  <span className="mt-1 block text-[9px] font-extrabold tracking-wider">
+                    START HERE
+                  </span>
+                </div>
               </div>
             </div>
-            <div className="absolute right-[-2px] top-[72px] grid h-[94px] w-[94px] place-items-center rounded-full border-[7px] border-[#f7f8f3] bg-[#dcf26b] text-[#075b3a]">
-              <div className="text-center">
-                <Icon name="heart" size={23} className="mx-auto" />
-                <span className="mt-1 block text-[9px] font-extrabold tracking-wider">
-                  START HERE
-                </span>
-              </div>
-            </div>
-            <p className="absolute bottom-1 right-0 text-[10px] text-[#82908b]">
-              Photo by Vitaly Gariev / Unsplash
-            </p>
-          </div>
+          )}
         </div>
       </section>
 
@@ -221,12 +225,16 @@ export default function Home({
           <div>
             <p className="eyebrow text-[#0a754a]">STUDENT VOICE</p>
             <blockquote className="mt-5 font-serif text-2xl font-medium leading-[1.65] text-[#1a3a30] md:text-3xl">
-              「最初は就活のため、くらいの気持ちでした。でも活動先で出会った人たちのおかげで、自分の視野がぐっと広がりました。」
+              「
+              {sampleReview
+                ? sampleReview.content
+                : "最初は就活のため、くらいの気持ちでした。でも活動先で出会った人たちのおかげで、自分の視野がぐっと広がりました。"}
+              」
             </blockquote>
             <p className="mt-6 text-sm font-bold text-[#075b3a]">
-              経済学部 2年{" "}
+              {sampleReview ? sampleReview.user_faculty : "経済学部 2年"}{" "}
               <span className="ml-2 font-normal text-[#718079]">
-                里山保全プロジェクトに参加
+                {featured ? `${featured.title} に参加` : ""}
               </span>
             </p>
           </div>

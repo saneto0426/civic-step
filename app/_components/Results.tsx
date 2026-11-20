@@ -1,19 +1,23 @@
-import { activities, type Activity } from "../_data/mock-data";
+import type { Activity } from "../_data/mock-data";
 import Icon from "./Icon";
 
 export default function Results({
+  activities,
   answers,
   saved,
   toggleSaved,
   openDetail,
   startQuiz,
 }: {
+  activities: Activity[];
   answers: string[];
-  saved: number[];
-  toggleSaved: (id: number) => void;
+  saved: (string | number)[];
+  toggleSaved: (id: string | number) => void;
   openDetail: (a: Activity) => void;
   startQuiz: () => void;
 }) {
+  const topThree = activities.slice(0, 3);
+
   return (
     <section className="pb-24">
       <div className="bg-[#075b3a] px-5 py-16 text-center text-white md:py-20">
@@ -27,14 +31,15 @@ export default function Results({
           あなたに合う活動が見つかりました。
         </h1>
         <p className="mx-auto mt-5 max-w-xl leading-7 text-white/65">
-          「{answers[0] || "環境・自然"}
-          」への興味と、参加しやすいペースをもとに選んだ上位3件です。
+          「{answers[0] || "興味分野"}」と「{answers[1] || "希望ペース"}
+          」をもとに選んだ上位{topThree.length}件です。
         </p>
       </div>
       <div className="mx-auto max-w-[1060px] px-5 md:px-8">
         <div className="-mt-7 flex items-center justify-between rounded-2xl border border-[#075b3a]/10 bg-white px-5 py-4 shadow-sm">
           <span className="text-sm text-[#65766f]">
-            <strong className="text-[#163229]">3件</strong> のおすすめ
+            <strong className="text-[#163229]">{topThree.length}件</strong>{" "}
+            のおすすめ
           </span>
           <button
             onClick={startQuiz}
@@ -44,7 +49,7 @@ export default function Results({
           </button>
         </div>
         <div className="mt-8 space-y-5">
-          {activities.map((activity, index) => (
+          {topThree.map((activity, index) => (
             <article
               key={activity.id}
               className="grid overflow-hidden rounded-2xl border border-[#dce3dc] bg-white transition hover:-translate-y-0.5 hover:shadow-lg md:grid-cols-[300px_1fr]"
